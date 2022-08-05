@@ -1,15 +1,80 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 
+import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
+import axios from "axios";
+
+import UserContexts from "../contexts/UserContexts";
 
 export default function Habits(){
 
-    const [thereAreHabits, setThereAreHabits] = useState(false);
+    const {token} = useContext(UserContexts);
+
     const days = ["D", "S", "T", "Q", "Q", "S", "S"];
+    const [habits, setHabits] = useState({name: "", days: []});
+    const [loading, setLoading] = useState(false);
+    const [disableForm, setDisableForm] = useState("");
+
+    const [thereAreHabits, setThereAreHabits] = useState(false); 
+    const [cancelCreateHabit, setCancelCreateHabit] = useState("");
+
+    function sendDays(day){
+
+        console.log(day)
+
+        const {days} = habits; 
+
+        const dayAlreadyIncluded = days.includes(day);
+
+        if(dayAlreadyIncluded){
+            const index = days.indexOf(day);
+            if(index > -1){
+                days.splice(index, 1);
+                const updateDays = days;
+                setHabits({...habits, days: updateDays});
+            }
+        } else {
+            const updateDays = [...days, day];
+            setHabits({...habits, days: updateDays});
+        }
+    }
+
+    function sendHabits(event){
+
+        event.preventDefault();
+
+        setLoading(true);
+        setDisableForm("disabled");
+
+        const {name, days} = habits;
+        const invalidDataHabit = (name === "" || days.length === 0);
+
+        if(invalidDataHabit){
+            window.alert("Para criar o seu hábito dê um nome ao seu hábito e selecione pelo menos 1 dia.");
+            setLoading(false);
+            setDisableForm("");
+
+        } else {
+            
+            const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits";
+        
+            const config = {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+
+            const body = habits;
+
+            const promise = axios.post(URL, body, config);
+            promise.then(res => console.log(res));
+            promise.catch(resp => console.log(resp))
+        }
+    }
 
     return(
-        <Container>
+        <Container disabled={disableForm}> {/*style={{cursor: "wait"}} disabled={"disabled"}*/}
             <Section>
                 <p>Meus Hábitos</p>
                 <div>
@@ -17,21 +82,62 @@ export default function Habits(){
                 </div>
             </Section>
 
-            <CreateHabit>
-                <input type="text" placeholder="nome do hábito"/>
-                <Days>
+            <CreateHabit 
+                onSubmit={sendHabits}
+                style={{display: cancelCreateHabit}}>   
+
+                <input type="text" placeholder="nome do hábito"
+                    onChange={(e) => setHabits({...habits, name: e.target.value})}/>
+
+                <Days loading={loading}>
                     {
                         days.map((day, index) =>{
-                            return(
-                                <div type="text" key={index}>{day}</div>
+
+                            const {days} = habits;   
+                            const selectedDay = days.includes(index+1);     
+                            return(             
+                                <div 
+                                    type="text" 
+                                    key={index}
+                                    
+                                    placeholder={day}
+                                    style={selectedDay ? {backgroundColor:"#CFCFCF", color:"#FFFFFF"} : {}}
+                                    onClick={()=> sendDays(index+1)}>
+                                    {day}
+                                </div>
                             );
                         })
                     }
                 </Days>
-
+                    
                 <Buttons>
-                    <button>Cancelar</button>
-                    <button type="submit">Salvar</button>
+
+                    <button onClick={()=> setCancelCreateHabit("none")}>Cancelar</button>
+                    
+                    {loading?
+                    <button 
+                        style={{
+                            display: "flex", 
+                            justifyContent: "center", 
+                                alignItems: "center", 
+                                opacity: "0.7"
+                            }}>
+
+                        <ThreeDots 
+                            height="50" 
+                            width="50" 
+                            radius="9"
+                            color="#ffffff" 
+                            ariaLabel="three-dots-loading"
+                            wrapperStyle={{}}
+                            wrapperClassName=""
+                            visible={true}
+                        /> 
+                        </button>
+                        :
+                        <button type="submit">Salvar</button>   
+                    }
+                    
                 </Buttons>
                 
             </CreateHabit>
@@ -41,11 +147,11 @@ export default function Habits(){
                     <p>Nome do hábito</p>
                     <ion-icon name="trash-outline"></ion-icon>
                 </div>
-                <Days>
+                <Days loading={loading}>
                     {
                         days.map((day, index) =>{
                             return(
-                                <div type="text" key={index}>{day}</div>
+                                <div type="text" key={index} placeholder={day}></div>
                             );
                         })
                     }
@@ -62,7 +168,7 @@ export default function Habits(){
     );
 }
 
-const Container = styled.div`
+const Container = styled.fieldset`
     height: 100vh;
     width: 100%;
     display: flex;
@@ -126,8 +232,6 @@ const CreateHabit = styled.form`
     background-color: #ffffff;
     position: relative;
 
-    display: none;
-
     input{
         height: 30%;
         width: 99%;
@@ -141,6 +245,8 @@ const CreateHabit = styled.form`
         font-size: 20px;
         color: #DBDBDB;
     }
+
+    
     button{
         height: 100%;
         width: 45%;
@@ -175,6 +281,7 @@ const Days = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    ${(props) => props.loading?  "pointer-events: none;" : undefined };
 
     div{
         height: 100%;

@@ -1,23 +1,87 @@
-import { Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
+import { ThreeDots } from  'react-loader-spinner';
 import styled from "styled-components";
+import axios from "axios";
 
 import logo from "../assets/bigLogo.png";
+import UserContexts from "../contexts/UserContexts";
 
 export default function SignIn(){
 
+    const navigate = useNavigate();
+    const {setSignIn, setToken} = useContext(UserContexts);
+
+    const [loading, setLoading] = useState(false);
+    const [disableForm, setDisableForm] = useState("");
+
+    const [userData, setUserData] = useState({email: "", password: ""});
+
+    function sendUserData(event){
+
+        event.preventDefault();
+
+        setLoading(true);
+        setDisableForm("disabled");
+        
+        const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login";
+        const body = userData;
+        const promise = axios.post(URL, body);
+
+        promise.then((response)=> {
+            const {token} = response.data;
+
+            setSignIn(true)
+            navigate("/Today")
+            setToken(token)
+
+            console.log(token)
+
+        });
+        promise.catch(res => {
+            setLoading(false);
+            setDisableForm("");
+            window.alert("Algo deu errado, tente novamente.");
+        });
+    }
+
     return(
         <>
-            <Container>
+            <Container disabled={disableForm}>
                 <Logo>
                     <img src={logo} alt={logo}/>
                 </Logo>
                 <Form>
-                    <input type="text" placeholder="email"/>
-                    <input type="password" placeholder="senha"/>
-                    <Link to="/habits" style={{height: "29%", width: "100%"}}>
-                        <button type="submit">Entrar</button>
-                    </Link>
+                    <input type="text" placeholder="email" value={userData.email} 
+                        onChange={(e) => setUserData({...userData, email: e.target.value})}/>
+                    <input type="password" placeholder="senha" value={userData.password}
+                        onChange={(e) => setUserData({...userData, password: e.target.value})}/>
+
+                    {loading?
+                        <button 
+                            style={{
+                                display: "flex", 
+                                justifyContent: "center", 
+                                alignItems: "center", 
+                                opacity: "0.7"
+                            }}>
+
+                            <ThreeDots 
+                                height="80" 
+                                width="80" 
+                                radius="9"
+                                color="#ffffff" 
+                                ariaLabel="three-dots-loading"
+                                wrapperStyle={{}}
+                                wrapperClassName=""
+                                visible={true}
+                            /> 
+
+                        </button>
+                            :
+                        <button type="submit" onClick={sendUserData}>Entrar</button>
+                    }
                 </Form>
                 <Link to="/signUp" style={{fontSize: "14px", color:"#52B6FF", position: "absolute", top: "70%"}}>
                     <p>Não tem uma conta? Cadastre-se!</p>
@@ -27,7 +91,7 @@ export default function SignIn(){
     );
 }
 
-const Container = styled.div`
+const Container = styled.fieldset`
     height: 100vh;
     width: 100%;
     display: flex;
@@ -56,7 +120,7 @@ const Form = styled.form`
     justify-content: space-between;
     position: absolute;
     top: 40%;
-
+    
         input{
             height: 28.5%;
             font-size: 20px;
@@ -67,9 +131,8 @@ const Form = styled.form`
         input::placeholder{
             color: #d4d4d4;
         }
-
         button{
-            height: 100%;
+            height: 29%;
             width: 100%;
             font-size: 21px;
             background-color:#52B6FF;
