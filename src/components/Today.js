@@ -38,9 +38,39 @@ export default function Today(){
 
     function sendHabitDone(habitId){
 
-        console.log(habitId)
-
         const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habitId}/check`;
+
+        const config = {
+            headers:{
+                "Authorization" : `Bearer ${token}`
+            }
+        };
+
+        const promise = axios.post(URL, null, config);
+
+        promise.then(()=>{
+
+            const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
+            const config = {
+                headers:{
+                    "Authorization" : `Bearer ${token}`
+                }
+            };
+
+            const promise = axios.get(URL, config);
+            promise.then((response)=> {
+                const {data} = response;
+                setHabits(data);
+            });
+            promise.catch(err => console.log(err));
+        });
+
+        promise.catch(err => console.log(err));
+    }
+
+    function removeHabitDone(habitId){
+
+        const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habitId}/uncheck`;
 
         const config = {
             headers:{
@@ -94,7 +124,7 @@ export default function Today(){
                                 
                                 <Icon 
                                     style={done? {backgroundColor: "#8FC549"} : {}}
-                                    onClick={()=> sendHabitDone(id)}
+                                    onClick={()=> done? removeHabitDone(id) : sendHabitDone(id)}
                                 >
                                     <ion-icon name="checkmark-outline"></ion-icon>
                                 </Icon>         
