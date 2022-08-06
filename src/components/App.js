@@ -20,13 +20,22 @@ export default function App(){
     const [signedIn, setSignIn] = useState(false);
     const [image, setImage] = useState("");
     const [token, setToken] = useState("");
+    const [progress, setProgress] = useState(0);
 
-    const value = {token, setToken, setSignIn, image, setImage};
-    const userData = {signedIn, token};
-
+    const value = {
+        token, 
+        setToken, 
+        setSignIn, 
+        image, 
+        setImage, 
+        progress, 
+        setProgress
+    };
+    
+    //const userData = {signedIn, token};
     //window.localStorage.setItem('userData', JSON.stringify(userData));
-
     //let DATA = JSON.parse(window.localStorage.getItem('userData'));
+
 
     return(
         <UserContexts.Provider value={value}>

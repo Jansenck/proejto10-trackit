@@ -11,12 +11,14 @@ import UserContexts from "../contexts/UserContexts";
 
 export default function Today(){
 
-    const {token} = useContext(UserContexts);
+    const {token, progress, setProgress} = useContext(UserContexts);
 
     const [habits, setHabits] = useState([]);
+    const [habitsDone, setHabitsDone] = useState(false);
+
 
     dayjs.locale('pt-br');
-    const today = dayjs().format("dddd, DD/MM")
+    const today = dayjs().format("dddd, DD/MM");
 
     useEffect(()=>{
 
@@ -28,9 +30,12 @@ export default function Today(){
         };
 
         const promise = axios.get(URL, config);
+
         promise.then((response)=> {
+
             const {data} = response;
             setHabits(data);
+            updateHabitsDone(data);
         });
         promise.catch(err => console.log(err));
 
@@ -61,6 +66,7 @@ export default function Today(){
             promise.then((response)=> {
                 const {data} = response;
                 setHabits(data);
+                updateHabitsDone(data);
             });
             promise.catch(err => console.log(err));
         });
@@ -93,6 +99,7 @@ export default function Today(){
             promise.then((response)=> {
                 const {data} = response;
                 setHabits(data);
+                updateHabitsDone(data);
             });
             promise.catch(err => console.log(err));
         });
@@ -100,11 +107,37 @@ export default function Today(){
         promise.catch(err => console.log(err));
     }
 
+    function updateHabitsDone(habits){
+
+        const update = habits.filter(habit => {
+            return habit.done;
+        });
+
+        if(update.length !== 0){
+            setHabitsDone(true);
+        } else {
+            setHabitsDone(false);
+        }
+        
+        const done = (update.length);
+        const allHabits = (habits.length);
+        const progressValue = parseInt((done/allHabits)*100);
+
+        setProgress(progressValue);
+    }
+
     return(
         <Container>
             <Section>
+
                 <p>{today.charAt(0).toUpperCase() + today.slice(1)}</p>
-                <p>Nenhum hábito concluído ainda</p>
+
+                {habitsDone?
+                   <p style={{color: "#8FC549"}}>{progress}% dos hábitos concluídos</p>
+                   :
+                   <p>Nenhum hábito concluído ainda</p> 
+                }
+                
             </Section>
 
             {(habits.length !== 0)?
