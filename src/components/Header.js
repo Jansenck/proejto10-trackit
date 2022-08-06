@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import UserContexts from "../contexts/UserContexts";
 
-import axios from "axios";
 import styled from "styled-components";
 
 export default function Header(){

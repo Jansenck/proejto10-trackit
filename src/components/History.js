@@ -19,7 +19,12 @@ const Container = styled.div`
     align-items: center;
     padding: 5%;
     box-sizing: border-box;
-`;
+
+    p{
+        font-size: 18px;
+        color: #666666;
+    }
+`; 
 
 const Section = styled.div`
     height: 10vh;
@@ -30,7 +35,7 @@ const Section = styled.div`
     
 
     p{
-        font-size: 18px;
+        font-size: 23px;
         color: #126BA5;
     }
 `;

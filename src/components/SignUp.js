@@ -7,7 +7,6 @@ import styled from "styled-components";
 import axios from "axios";
 
 import logo from "../assets/bigLogo.png";
-import { CenturyView } from "react-calendar";
 
 export default function SignUp(){
 

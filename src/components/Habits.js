@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { useState, useContext, useEffect } from "react";
 
 import { ThreeDots } from "react-loader-spinner";
@@ -343,17 +342,29 @@ const UserHabits = styled.div`
     box-sizing: border-box;
     background-color: #ffffff;
     position: relative;
-    margin-bottom: 3%;
+    margin-bottom: 4%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 
     div{
         display: flex;
         flex-direction: row;
         justify-content: space-between;
     }
+    ion-icon{
+        height: 22px;
+        width: 20px;
+        position: absolute;
+        top: 12%;
+        right: 3%;
+    }
 `;
 
 const HabitName = styled.div`
-    height: 45%;
+    height: 50%;
+    font-size: 20px;
+    color: #666666;
 `;
 const Days = styled.div`
     height: 30%;
