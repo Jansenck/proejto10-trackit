@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
@@ -11,19 +11,31 @@ export default function Habits(){
 
     const {token} = useContext(UserContexts);
 
-    const days = ["D", "S", "T", "Q", "Q", "S", "S"];
-    const [habits, setHabits] = useState({name: "", days: []});
-    const [loading, setLoading] = useState(false);
+    const weekdays = ["D", "S", "T", "Q", "Q", "S", "S"];
+    const [newHabit, setNewHabit] = useState({name: "", days: []});
+    const [habits, setHabits] = useState([]);
+    const [loading, setLoading] = useState(false); 
     const [disableForm, setDisableForm] = useState("");
+    const [cancelCreateHabit, setCancelCreateHabit] = useState(true);
 
-    const [thereAreHabits, setThereAreHabits] = useState(false); 
-    const [cancelCreateHabit, setCancelCreateHabit] = useState("");
+    useEffect(()=>{
+
+        const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits";
+        const config = {
+            headers:{
+                "Authorization": `Bearer ${token}`
+            }
+        }
+
+        const request = axios.get(URL, config);
+        request.then(res => setHabits(res.data));
+        request.catch(res => console.log(res));
+
+    })
 
     function sendDays(day){
 
-        console.log(day)
-
-        const {days} = habits; 
+        const {days} = newHabit; 
 
         const dayAlreadyIncluded = days.includes(day);
 
@@ -32,11 +44,11 @@ export default function Habits(){
             if(index > -1){
                 days.splice(index, 1);
                 const updateDays = days;
-                setHabits({...habits, days: updateDays});
+                setNewHabit({...newHabit, days: updateDays});
             }
         } else {
             const updateDays = [...days, day];
-            setHabits({...habits, days: updateDays});
+            setNewHabit({...newHabit, days: updateDays});
         }
     }
 
@@ -44,10 +56,12 @@ export default function Habits(){
 
         event.preventDefault();
 
+        console.log(newHabit)
+
         setLoading(true);
         setDisableForm("disabled");
 
-        const {name, days} = habits;
+        const {name, days} = newHabit;
         const invalidDataHabit = (name === "" || days.length === 0);
 
         if(invalidDataHabit){
@@ -65,42 +79,46 @@ export default function Habits(){
                 }
             }
 
-            const body = habits;
+            const body = newHabit;
 
             const promise = axios.post(URL, body, config);
-            promise.then(res => console.log(res));
+            promise.then(() => {
+                const refreshNewHabit = {name: "", days: []}
+                setNewHabit(refreshNewHabit);
+                setCancelCreateHabit(true);
+                setLoading(false);
+                setDisableForm("");
+            });
             promise.catch(resp => console.log(resp))
         }
     }
 
     return(
-        <Container disabled={disableForm}> {/*style={{cursor: "wait"}} disabled={"disabled"}*/}
+        <Container disabled={disableForm}> {/*style={{cursor: "wait"}}*/}
             <Section>
                 <p>Meus Hábitos</p>
-                <div>
+                <div onClick={()=> setCancelCreateHabit(false)}>
                     <ion-icon name="add"></ion-icon>
                 </div>
             </Section>
 
             <CreateHabit 
                 onSubmit={sendHabits}
-                style={{display: cancelCreateHabit}}>   
+                style={cancelCreateHabit? {display: "none"} : {}}>   
 
-                <input type="text" placeholder="nome do hábito"
-                    onChange={(e) => setHabits({...habits, name: e.target.value})}/>
+                <input type="text" placeholder="nome do hábito" value={newHabit.name}
+                    onChange={(e) => setNewHabit({...newHabit, name: e.target.value})}/>
 
-                <Days loading={loading}>
+                <Days disablePointer={loading}>
                     {
-                        days.map((day, index) =>{
+                        weekdays.map((day, index) =>{
 
-                            const {days} = habits;   
+                            const {days} = newHabit;   
                             const selectedDay = days.includes(index+1);     
                             return(             
                                 <div 
                                     type="text" 
                                     key={index}
-                                    
-                                    placeholder={day}
                                     style={selectedDay ? {backgroundColor:"#CFCFCF", color:"#FFFFFF"} : {}}
                                     onClick={()=> sendDays(index+1)}>
                                     {day}
@@ -112,13 +130,13 @@ export default function Habits(){
                     
                 <Buttons>
 
-                    <button onClick={()=> setCancelCreateHabit("none")}>Cancelar</button>
+                    <Cancel onClick={()=> setCancelCreateHabit(true)}>Cancelar</Cancel>
                     
                     {loading?
                     <button 
                         style={{
-                            display: "flex", 
-                            justifyContent: "center", 
+                                display: "flex", 
+                                justifyContent: "center", 
                                 alignItems: "center", 
                                 opacity: "0.7"
                             }}>
@@ -142,42 +160,68 @@ export default function Habits(){
                 
             </CreateHabit>
                 
-            <UserHabits>
-                <div>
-                    <p>Nome do hábito</p>
-                    <ion-icon name="trash-outline"></ion-icon>
-                </div>
-                <Days loading={loading}>
-                    {
-                        days.map((day, index) =>{
-                            return(
-                                <div type="text" key={index} placeholder={day}></div>
-                            );
-                        })
-                    }
-                </Days>
-            </UserHabits>
+            {cancelCreateHabit?
 
-            <Message>
-                <p>
-                    Você não tem nenhum hábito cadastrado ainda. 
-                    Adicione um hábito para começar a trackear!
-                </p>
-            </Message>
+                habits.map((habit, id) =>{
+
+                    const {name, days} = habit;
+
+                    return(
+                        <UserHabits key={id}> {/*style={habits.length !== 0 ? {display:"initial"} : {}}*/}
+                            <HabitName >
+                                <p>{name}</p>
+                                <ion-icon name="trash-outline"></ion-icon>
+                            </HabitName>
+
+                            <Days disablePointer={loading}>
+                                
+                                {
+                                    weekdays.map((day, index) =>{
+
+                                        const includedDay = days.includes(index+1);
+                                       
+
+                                        return(
+                                            <div 
+                                                key={index}
+                                                placeholder={day}
+                                                style={includedDay ? {backgroundColor:"#CFCFCF", color:"#FFFFFF"} : {}}
+                                                onClick={()=> sendDays(index+1)}>
+                                                {day}
+                                            </div>
+                                        );
+                                    })
+                                }
+                            </Days>
+                        </UserHabits>
+                    )
+                })
+                :
+                <></>
+            }
+
+            {(habits.length === 0)?
+                <Message>
+                    <p>
+                        Você não tem nenhum hábito cadastrado ainda. 
+                        Adicione um hábito para começar a trackear!
+                    </p>
+                </Message>
+                :
+                <></>
+            }
         </Container>
     );
 }
 
 const Container = styled.fieldset`
-    height: 100vh;
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
 
     padding: 5%;
     box-sizing: border-box;
-    background-color: #e5e5e5;
+    margin-bottom: 22%;
 `;
 
 const Section = styled.div`
@@ -215,8 +259,6 @@ const Message = styled.div`
     align-items: center;
     margin-top: 5%;
 
-    display: none;
-
     p{
         font-size: 18px;
         color: #666666;
@@ -235,7 +277,7 @@ const CreateHabit = styled.form`
     input{
         height: 30%;
         width: 99%;
-        margin-bottom: 3%;
+        margin-bottom: 2%;
         border: 1px solid #D5D5D5;
         border-radius: 5px;
         font-size: 20px;
@@ -245,18 +287,10 @@ const CreateHabit = styled.form`
         font-size: 20px;
         color: #DBDBDB;
     }
-
-    
     button{
-        height: 100%;
+        height: 90%;
         width: 45%;
         border-radius: 5px;
-    }
-    button:nth-child(1){
-        background-color: #ffffff;
-        color: #52B6FF;
-    }
-    button:nth-child(2){
         background-color: #52B6FF;
         color: #ffffff;
     }
@@ -270,30 +304,19 @@ const Buttons = styled.div`
     justify-content: space-between;
     align-items: center;
     position: absolute;
-    right: 5%;
-    bottom: 10%;
+    right: 4%;
+    bottom: 8%;
 `;
 
-const Days = styled.div`
-    height: 20%;
-    width: 90%;
+const Cancel = styled.div`
+    height: 100%;
+    width: 45%;
+    border-radius: 5px;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    ${(props) => props.loading?  "pointer-events: none;" : undefined };
-
-    div{
-        height: 100%;
-        width: 12%;
-        border: 1px solid #D5D5D5;
-        border-radius: 5px;
-        font-size: 15px;
-        color: #DBDBDB;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+    background-color: #ffffff;
+    color: #52B6FF; 
 `;
 
 const UserHabits = styled.div`
@@ -304,14 +327,36 @@ const UserHabits = styled.div`
     box-sizing: border-box;
     background-color: #ffffff;
     position: relative;
-    margin-bottom: 3vh;
-
-    display: none;
+    margin-bottom: 3%;
 
     div{
-        height: 50%;
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
+    }
+`;
+
+const HabitName = styled.div`
+    height: 45%;
+`;
+const Days = styled.div`
+    height: 30%;
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    ${(props) => props.disablePointer?  "pointer-events: none;" : undefined };
+
+    div{
+        height: 32px;
+        width: 32px;
+        border: 1px solid #D5D5D5;
+        border-radius: 5px;
+        font-size: 15px;
+        color: #DBDBDB;
+        display: flex;
+        justify-content: center;
         align-items: center;
     }
 `;

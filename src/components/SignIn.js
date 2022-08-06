@@ -36,8 +36,6 @@ export default function SignIn(){
             navigate("/Today")
             setToken(token)
 
-            console.log(token)
-
         });
         promise.catch(res => {
             setLoading(false);
@@ -100,6 +98,7 @@ const Container = styled.fieldset`
     align-items: center;
     padding: 10%;
     box-sizing: border-box;
+    background-color: #FFFFFF;
 `;
 
 const Logo = styled.div`

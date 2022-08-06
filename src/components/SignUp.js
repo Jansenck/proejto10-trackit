@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-import { ReactDOM } from "react";
 import { ThreeDots } from  'react-loader-spinner';
 
 import styled from "styled-components";
@@ -76,14 +75,14 @@ export default function SignUp(){
                                 }}>
 
                                <ThreeDots 
-                                height="80" 
-                                width="80" 
-                                radius="9"
-                                color="#ffffff" 
-                                ariaLabel="three-dots-loading"
-                                wrapperStyle={{}}
-                                wrapperClassName=""
-                                visible={true}
+                                    height="80" 
+                                    width="80" 
+                                    radius="9"
+                                    color="#ffffff" 
+                                    ariaLabel="three-dots-loading"
+                                    wrapperStyle={{}}
+                                    wrapperClassName=""
+                                    visible={true}
                                 /> 
 
                             </button>
@@ -109,6 +108,7 @@ const Container = styled.fieldset`
     align-items: center;
     padding: 10%;
     box-sizing: border-box;
+    background-color: #FFFFFF;
 `;
 
 const Logo = styled.div`
