@@ -89,8 +89,27 @@ export default function Habits(){
                 setLoading(false);
                 setDisableForm("");
             });
+
             promise.catch(resp => console.log(resp))
         }
+    }
+
+    function deleteHabit(name, habitId){
+
+        const toDeleteHabit = window.confirm(`Deseja deletar o hábito '${name}' ?`);
+
+        if(toDeleteHabit){
+            const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habitId}`;
+            const config = {
+                headers:{
+                    "Authorization": `Bearer ${token}`
+                }
+            };
+
+            const request = axios.delete(URL, config);
+            request.then(()=>console.log('apaguei ai'));
+            request.catch(()=> console.log('deu ruim ai'));
+        } 
     }
 
     return(
@@ -162,15 +181,15 @@ export default function Habits(){
                 
             {cancelCreateHabit?
 
-                habits.map((habit, id) =>{
+                habits.map(habit =>{
 
-                    const {name, days} = habit;
+                    const {id, name, days} = habit;
 
                     return(
                         <UserHabits key={id}> {/*style={habits.length !== 0 ? {display:"initial"} : {}}*/}
                             <HabitName >
                                 <p>{name}</p>
-                                <ion-icon name="trash-outline"></ion-icon>
+                                <ion-icon name="trash-outline" onClick={()=>deleteHabit(name, id)}></ion-icon>
                             </HabitName>
 
                             <Days disablePointer={loading}>
