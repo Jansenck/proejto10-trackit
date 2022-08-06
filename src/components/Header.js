@@ -1,15 +1,20 @@
+import { useContext } from "react";
+import UserContexts from "../contexts/UserContexts";
+
+import axios from "axios";
 import styled from "styled-components";
 
-import logo from "../assets/bigLogo.png";
-import monster from "../assets/monster.jpg"
-
-
 export default function Header(){
+
+    const {image} = useContext(UserContexts);
+
+    //let userToken = window.localStorage.getItem('userToken');
+    //let userToken = JSON.parse(window.localStorage.getItem('userData'));
 
     return( 
         <Head>
             <h1>Trackit</h1>
-            <img src={monster} alt={monster}/>
+            <img src={image} alt={image}/>
         </Head>
     );
 }

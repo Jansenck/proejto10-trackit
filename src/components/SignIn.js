@@ -11,7 +11,7 @@ import UserContexts from "../contexts/UserContexts";
 export default function SignIn(){
 
     const navigate = useNavigate();
-    const {setSignIn, setToken} = useContext(UserContexts);
+    const {setSignIn, setToken, setImage} = useContext(UserContexts);
 
     const [loading, setLoading] = useState(false);
     const [disableForm, setDisableForm] = useState("");
@@ -30,11 +30,12 @@ export default function SignIn(){
         const promise = axios.post(URL, body);
 
         promise.then((response)=> {
-            const {token} = response.data;
+            const {token, image} = response.data;
 
-            setSignIn(true)
-            navigate("/Today")
-            setToken(token)
+            setImage(image);
+            setToken(token);
+            setSignIn(true);
+            navigate("/today")
 
         });
         promise.catch(res => {

@@ -8,14 +8,12 @@ export default function Footer(){
 
     const percentage = 0;
 
-
-
     return(
         <Menu>
             <Link to="/habits" style={{width: "35%", color: "#52B6FF"}}>
                 Hábitos
             </Link>
-                <div style={{ width: 90, height: 90 , paddingBottom: "5vh"}}>
+                <Link to="/today" style={{ width: 90, height: 90 , paddingBottom: "5vh"}}>
                     <CircularProgressbar
                         value={percentage}
                         text={"Hoje"}
@@ -28,7 +26,7 @@ export default function Footer(){
                         trailColor: "transparent"
                         })}
                     />
-                </div>
+                </Link >
             <Link to="/history" style={{width: "35%", color: "#52B6FF"}}>
                 Histórico
             </Link>

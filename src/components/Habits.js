@@ -56,8 +56,6 @@ export default function Habits(){
 
         event.preventDefault();
 
-        console.log(newHabit)
-
         setLoading(true);
         setDisableForm("disabled");
 
@@ -237,7 +235,6 @@ const Container = styled.fieldset`
     display: flex;
     flex-direction: column;
     align-items: center;
-
     padding: 5%;
     box-sizing: border-box;
     margin-bottom: 22%;

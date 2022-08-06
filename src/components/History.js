@@ -17,10 +17,8 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-
     padding: 5%;
     box-sizing: border-box;
-    background-color: #e5e5e5;
 `;
 
 const Section = styled.div`
