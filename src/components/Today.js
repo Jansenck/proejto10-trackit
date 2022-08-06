@@ -26,11 +26,49 @@ export default function Today(){
                 "Authorization" : `Bearer ${token}`
             }
         };
+
         const promise = axios.get(URL, config);
-        promise.then((response)=> console.log(response.data));
-        promise.then(err => console.log(err));
+        promise.then((response)=> {
+            const {data} = response;
+            setHabits(data);
+        });
+        promise.catch(err => console.log(err));
 
     });
+
+    function sendHabitDone(habitId){
+
+        console.log(habitId)
+
+        const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habitId}/check`;
+
+        const config = {
+            headers:{
+                "Authorization" : `Bearer ${token}`
+            }
+        };
+
+        const promise = axios.post(URL, null, config);
+
+        promise.then(()=>{
+
+            const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
+            const config = {
+                headers:{
+                    "Authorization" : `Bearer ${token}`
+                }
+            };
+
+            const promise = axios.get(URL, config);
+            promise.then((response)=> {
+                const {data} = response;
+                setHabits(data);
+            });
+            promise.catch(err => console.log(err));
+        });
+
+        promise.catch(err => console.log(err));
+    }
 
     return(
         <Container>
@@ -39,19 +77,35 @@ export default function Today(){
                 <p>Nenhum hábito concluído ainda</p>
             </Section>
 
-            <Habit>
-                <div>
-                    <Infos>
-                        <p>Nome do hábito</p>
-                        <p>Sequência atual: 2 dias</p>
-                        <p>Seu recorde: 5 dias</p>
-                    </Infos>
-                    
-                    <Icon>
-                        <ion-icon name="checkmark-outline"></ion-icon>
-                    </Icon>         
-                </div>
-            </Habit>
+            {(habits.length !== 0)?
+
+                habits.map((habit, index) =>{
+
+                    const {id, name, done, currentSequence, highestSequence} = habit;
+
+                    return(
+                        <Habit key={index}>
+                            <div>
+                                <Infos>
+                                    <p>{name}</p>
+                                    <p>Sequência atual: {currentSequence} dias</p>
+                                    <p>Seu recorde: {highestSequence} dias</p>
+                                </Infos>
+                                
+                                <Icon 
+                                    style={done? {backgroundColor: "#8FC549"} : {}}
+                                    onClick={()=> sendHabitDone(id)}
+                                >
+                                    <ion-icon name="checkmark-outline"></ion-icon>
+                                </Icon>         
+                            </div>
+                        </Habit>
+                    );
+                })
+                :
+                <></>
+            }
+            
         </Container>
     );
 }
@@ -69,7 +123,7 @@ const Container = styled.div`
 const Section = styled.div`
     height: 13vh;
     width: 100%;
-    padding: 5%;
+    padding: 5% 0;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -92,6 +146,7 @@ const Habit = styled.div`
     padding: 5%;
     box-sizing: border-box;
     background-color: #ffffff;
+    color: #666666;
     margin-bottom: 3vh;
 
     div{
@@ -99,7 +154,12 @@ const Habit = styled.div`
         display: flex; 
         justify-content: space-between;
     }
-
+    p{
+        font-size: 13px;
+    }
+    p:nth-child(1){
+        font-size: 20px;
+    }
 `;
 
 const Infos = styled.div`
@@ -111,7 +171,7 @@ const Infos = styled.div`
 const Icon = styled.div`
     height: 100%;
     width: 25%;
-    background: #8FC549;
+    background: #E7E7E7;
     border-radius: 5px;
     color: #ffffff;
     font-size: 55px;
