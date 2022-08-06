@@ -145,14 +145,23 @@ export default function Today(){
                 habits.map((habit, index) =>{
 
                     const {id, name, done, currentSequence, highestSequence} = habit;
+                    const recordSequence = ((currentSequence !== 0 ) && (currentSequence >= highestSequence));
 
                     return(
                         <Habit key={index}>
                             <div>
                                 <Infos>
                                     <p>{name}</p>
-                                    <p>Sequência atual: {currentSequence} dias</p>
-                                    <p>Seu recorde: {highestSequence} dias</p>
+                                    <p>Sequência atual: 
+                                        <span style={done? {color: "#8FC549"} : {}}>
+                                            {currentSequence} dias
+                                        </span>
+                                    </p>
+                                    <p>Seu recorde:  
+                                        <span style={recordSequence? {color: "#8FC549"} : {}}>
+                                            {highestSequence} dias
+                                        </span>
+                                    </p>
                                 </Infos>
                                 
                                 <Icon 
