@@ -42,10 +42,12 @@ export default function SignIn(){
             localStorage.setItem(`${token}`, serializeUserData);
 
         });
-        promise.catch(res => {
+        promise.catch(error => {
+
+            const {message} = error.response.data;
             setLoading(false);
             setDisableForm("");
-            window.alert("Algo deu errado, tente novamente.");
+            window.alert(message);
         });
     }
 

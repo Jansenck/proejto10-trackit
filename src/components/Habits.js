@@ -10,7 +10,10 @@ import Footer from "./Footer";
 
 export default function Habits(){
 
-    const {token} = useContext(UserContexts);
+    const {token, progress, setProgress} = useContext(UserContexts);
+
+    const serializedUsedData = localStorage.getItem("localUserData");
+    const localUserData = JSON.parse(serializedUsedData);
 
     const weekdays = ["D", "S", "T", "Q", "Q", "S", "S"];
     const [newHabit, setNewHabit] = useState({name: "", days: []});
@@ -24,15 +27,48 @@ export default function Habits(){
         const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits";
         const config = {
             headers:{
-                "Authorization": `Bearer ${token}`
+                "Authorization": `Bearer ${localUserData !== undefined? localUserData.token : token}`
             }
         }
 
         const request = axios.get(URL, config);
         request.then(res => setHabits(res.data));
-        request.catch(res => console.log(res));
+        request.catch(error => {
+            const {message} = error.response.data;
+            window.alert(message);
+        });
+    });
 
-    })
+    useEffect(()=>{
+
+        const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
+        const config = {
+            headers:{
+                "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
+            }
+        };
+
+        const promise = axios.get(URL, config);
+
+        promise.then((habits)=> {
+
+           const {data} = habits;
+            
+            const update = data.filter(habit => {
+                return habit.done;
+            });
+
+            const done = (update.length);
+            const allHabits = (data.length);
+            const progressValue = parseInt((done/allHabits)*100);
+            setProgress(progressValue);
+
+        });
+        promise.catch(error => {
+            const {message} = error.response.data;
+            window.alert(message);
+        });
+    });
 
     function sendDays(day){
 
@@ -74,7 +110,7 @@ export default function Habits(){
         
             const config = {
                 headers: {
-                    "Authorization": `Bearer ${token}`
+                    "Authorization": `Bearer ${localUserData !== undefined? localUserData.token : token}`
                 }
             }
 
@@ -89,7 +125,10 @@ export default function Habits(){
                 setDisableForm("");
             });
 
-            promise.catch(resp => console.log(resp))
+            promise.catch(error => {
+                const {message} = error.response.data;
+                window.alert(message);
+            });
         }
     }
 
@@ -101,13 +140,16 @@ export default function Habits(){
             const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habitId}`;
             const config = {
                 headers:{
-                    "Authorization": `Bearer ${token}`
+                    "Authorization": `Bearer ${localUserData !== undefined? localUserData.token : token}`
                 }
             };
 
             const request = axios.delete(URL, config);
-            request.then(()=>console.log('apaguei ai'));
-            request.catch(()=> console.log('deu ruim ai'));
+            request.then(()=> window.alert(`Hábito '${name}' apagado com sucesso!`));
+            request.catch((error)=> {
+                const {message} = error.response.data;
+                window.alert(message);
+            });
         } 
     }
 
@@ -231,7 +273,7 @@ export default function Habits(){
                     <></>
                 }
             </Container>
-            <Footer/>
+            <Footer progress={progress}/>
         </>
     );
 }

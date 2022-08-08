@@ -13,7 +13,7 @@ export default function Header(){
     return( 
         <Head>
             <h1>Trackit</h1>
-            <img src={localUserData.image} alt={localUserData.image}/>
+            <img src={localUserData !== undefined? localUserData.image : image} alt={localUserData !== undefined? localUserData.image : image}/>
         </Head>
     );
 }

@@ -36,10 +36,11 @@ export default function SignUp(){
 
         promise.then(() => navigate("/"));
         
-        promise.catch(res => {
+        promise.catch(error => { 
+            const {message} = error.response.data;
             setLoading(false);
             setDisableForm("");
-            window.alert("Algo deu errado, tente novamente.");
+            window.alert(message);
         })
     }
 

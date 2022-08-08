@@ -14,6 +14,9 @@ export default function Today(){
 
     const {token, progress, setProgress} = useContext(UserContexts);
 
+    const serializedUsedData = localStorage.getItem("localUserData");
+    const localUserData = JSON.parse(serializedUsedData);
+
     const [habits, setHabits] = useState([]);
     const [habitsDone, setHabitsDone] = useState(false);
 
@@ -26,7 +29,7 @@ export default function Today(){
         const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
         const config = {
             headers:{
-                "Authorization" : `Bearer ${token}`
+                "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
             }
         };
 
@@ -38,7 +41,10 @@ export default function Today(){
             setHabits(data);
             updateHabitsDone(data);
         });
-        promise.catch(err => console.log(err));
+        promise.catch(error => {
+            const {message} = error.response.data;
+            window.alert(message);
+        });
 
     });
 
@@ -48,7 +54,7 @@ export default function Today(){
 
         const config = {
             headers:{
-                "Authorization" : `Bearer ${token}`
+                "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
             }
         };
 
@@ -59,7 +65,7 @@ export default function Today(){
             const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
             const config = {
                 headers:{
-                    "Authorization" : `Bearer ${token}`
+                    "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
                 }
             };
 
@@ -69,10 +75,16 @@ export default function Today(){
                 setHabits(data);
                 updateHabitsDone(data);
             });
-            promise.catch(err => console.log(err));
+            promise.catch(error => {
+                const {message} = error.response.data;
+                window.alert(message);
+            });
         });
 
-        promise.catch(err => console.log(err));
+        promise.catch(error => {
+            const {message} = error.response.data;
+            window.alert(message);
+        });
     }
 
     function removeHabitDone(habitId){
@@ -81,7 +93,7 @@ export default function Today(){
 
         const config = {
             headers:{
-                "Authorization" : `Bearer ${token}`
+                "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
             }
         };
 
@@ -92,7 +104,7 @@ export default function Today(){
             const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
             const config = {
                 headers:{
-                    "Authorization" : `Bearer ${token}`
+                    "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
                 }
             };
 
@@ -102,10 +114,16 @@ export default function Today(){
                 setHabits(data);
                 updateHabitsDone(data);
             });
-            promise.catch(err => console.log(err));
+            promise.catch(error => {
+                const {message} = error.response.data;
+                window.alert(message);
+            });
         });
 
-        promise.catch(err => console.log(err));
+        promise.catch(error => {
+            const {message} = error.response.data;
+            window.alert(message);
+        });
     }
 
     function updateHabitsDone(habits){
