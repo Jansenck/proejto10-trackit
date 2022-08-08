@@ -3,10 +3,12 @@ import { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
-
 import axios from "axios";
 
 import UserContexts from "../contexts/UserContexts";
+
+import Header from "./Header";
+import Footer from "./Footer";
 
 export default function Today(){
 
@@ -121,11 +123,12 @@ export default function Today(){
         const done = (update.length);
         const allHabits = (habits.length);
         const progressValue = parseInt((done/allHabits)*100);
-
         setProgress(progressValue);
     }
 
     return(
+        <>
+        <Header/>
         <Container>
             <Section>
 
@@ -151,16 +154,18 @@ export default function Today(){
                             <div>
                                 <Infos>
                                     <p>{name}</p>
-                                    <p>Sequência atual: 
-                                        <span style={done? {color: "#8FC549"} : {}}>
-                                            {currentSequence} dias
-                                        </span>
-                                    </p>
-                                    <p>Seu recorde:  
-                                        <span style={recordSequence? {color: "#8FC549"} : {}}>
-                                            {highestSequence} dias
-                                        </span>
-                                    </p>
+                                    <div>
+                                        <p>Sequência atual: 
+                                            <span style={done? {color: "#8FC549"} : {}}>
+                                                {currentSequence} dias
+                                            </span>
+                                        </p>
+                                        <p>Seu recorde:  
+                                            <span style={(recordSequence && done)? {color: "#8FC549"} : {}}>
+                                                {highestSequence} dias
+                                            </span>
+                                        </p>
+                                    </div>
                                 </Infos>
                                 
                                 <Icon 
@@ -178,6 +183,8 @@ export default function Today(){
             }
             
         </Container>
+        <Footer progress={progress}/>
+        </>
     );
 }
 
@@ -211,25 +218,22 @@ const Section = styled.div`
 `;
 
 const Habit = styled.div`
-    height: 15vh;
+    height: 100px;
     width: 100%;
     border-radius: 5px;
-    padding: 5%;
+    padding: 15px;
     box-sizing: border-box;
     background-color: #ffffff;
     color: #666666;
     margin-bottom: 3vh;
+    font-size: 20px;
 
     div{
-        height: 100%;
         display: flex; 
         justify-content: space-between;
     }
-    p{
-        font-size: 13px;
-    }
-    p:nth-child(1){
-        font-size: 20px;
+    div:nth-child(1){
+        height: 100%;
     }
 `;
 
@@ -237,15 +241,23 @@ const Infos = styled.div`
     height: 80%;
     width: 70%;
     flex-direction: column;
+
+    div{
+        height: 35px;
+        font-size: 13px;
+        flex-direction: column;
+        justify-content: space-around;
+    }
 `;
 
 const Icon = styled.div`
-    height: 100%;
-    width: 25%;
+    height: 70px;
+    width: 70px;
     background: #E7E7E7;
     border-radius: 5px;
     color: #ffffff;
     font-size: 55px;
+    font-style: bold;
     font-weight: 700;
     display: flex;
     justify-content: center;

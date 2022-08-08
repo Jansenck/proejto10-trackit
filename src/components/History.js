@@ -1,13 +1,20 @@
 import styled from "styled-components";
 
+import Header from "./Header";
+import Footer from "./Footer";
+
 export default function History(){
     return(
-        <Container>
-            <Section>
-                <p>Histórico</p>
-            </Section>
-            <p>Em breve você poderá ver o histórico dos seus hábitos aqui!</p>
-        </Container>
+        <>
+            <Header/>
+            <Container>
+                <Section>
+                    <p>Histórico</p>
+                </Section>
+                <p>Em breve você poderá ver o histórico dos seus hábitos aqui!</p>
+            </Container>
+            <Footer/>
+        </>
     );
 }
 

@@ -36,6 +36,10 @@ export default function SignIn(){
             setToken(token);
             setSignIn(true);
             navigate("/today")
+            
+            const localData = {token, image};
+            const serializeUserData = JSON.stringify(localData);
+            localStorage.setItem(`${token}`, serializeUserData);
 
         });
         promise.catch(res => {
@@ -48,7 +52,8 @@ export default function SignIn(){
     return(
         <>
             <Container disabled={disableForm}>
-                <Logo>
+                <div>
+                    <Logo>
                     <img src={logo} alt={logo}/>
                 </Logo>
                 <Form>
@@ -82,9 +87,11 @@ export default function SignIn(){
                         <button type="submit" onClick={sendUserData}>Entrar</button>
                     }
                 </Form>
-                <Link to="/signUp" style={{fontSize: "14px", color:"#52B6FF", position: "absolute", top: "70%"}}>
+                <Link to="/signUp" style={{fontSize: "14px", color:"#52B6FF", marginTop: "35px"}}>
                     <p>Não tem uma conta? Cadastre-se!</p>
                 </Link>
+                </div>
+                
             </Container>
         </>
     );
@@ -93,36 +100,40 @@ export default function SignIn(){
 const Container = styled.fieldset`
     height: 100vh;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 10%;
-    box-sizing: border-box;
     background-color: #FFFFFF;
+
+    div:nth-child(1){
+        
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5%;
+        box-sizing: border-box;
+    }
 `;
 
 const Logo = styled.div`
-    height: 35%;
-    width: 60%;
+    height: 182px;
+    width: 180px;
     display: flex;
     justify-content: center;
-    align-items: center;
-    position: absolute;
-    top: 5%;
+    align-items: space-between;
+    margin: 10% 5%;
+    box-sizing: border-box;
 `;
 
 const Form = styled.form`
-    height: 25vh;
-    width: 80%;
+    height: 167px;
+    width: 90%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    position: absolute;
-    top: 40%;
     
         input{
-            height: 28.5%;
+            height: 46px;
+            width: 100%;
             font-size: 20px;
             color: #666666;
             border: 1px solid #d5d5d5;
@@ -132,7 +143,7 @@ const Form = styled.form`
             color: #d4d4d4;
         }
         button{
-            height: 29%;
+            height: 50px; 
             width: 100%;
             font-size: 21px;
             background-color:#52B6FF;

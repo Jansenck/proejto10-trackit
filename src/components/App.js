@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import UserContexts from "../contexts/UserContexts";
 
@@ -21,7 +21,7 @@ export default function App(){
     const [image, setImage] = useState("");
     const [token, setToken] = useState("");
     const [progress, setProgress] = useState(0);
-
+    
     const value = {
         token, 
         setToken, 
@@ -31,16 +31,11 @@ export default function App(){
         progress, 
         setProgress
     };
-    
-    //const userData = {signedIn, token};
-    //window.localStorage.setItem('userData', JSON.stringify(userData));
-    //let DATA = JSON.parse(window.localStorage.getItem('userData'));
-
 
     return(
         <UserContexts.Provider value={value}>
             <BrowserRouter>
-                {signedIn? <Header/> : <></>}     
+                    
                 <Routes>
                     <Route path="/" element={<SignIn/>}></Route>
                     <Route path="/signUp" element={<SignUp/>}></Route>

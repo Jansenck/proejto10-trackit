@@ -3,8 +3,10 @@ import { useState, useContext, useEffect } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styled from "styled-components";
 import axios from "axios";
-
 import UserContexts from "../contexts/UserContexts";
+
+import Header from "./Header";
+import Footer from "./Footer";
 
 export default function Habits(){
 
@@ -110,142 +112,151 @@ export default function Habits(){
     }
 
     return(
-        <Container disabled={disableForm}> {/*style={{cursor: "wait"}}*/}
-            <Section>
-                <p>Meus Hábitos</p>
-                <div onClick={()=> setCancelCreateHabit(false)}>
-                    <ion-icon name="add"></ion-icon>
-                </div>
-            </Section>
 
-            <CreateHabit 
-                onSubmit={sendHabits}
-                style={cancelCreateHabit? {display: "none"} : {}}>   
+        <>
+            <Header/>
+            <Container disabled={disableForm}> {/*style={{cursor: "wait"}}*/}
+                <Section>
+                    <p>Meus Hábitos</p>
+                    <div onClick={()=> setCancelCreateHabit(false)}>
+                        <ion-icon name="add"></ion-icon>
+                    </div>
+                </Section>
 
-                <input type="text" placeholder="nome do hábito" value={newHabit.name}
-                    onChange={(e) => setNewHabit({...newHabit, name: e.target.value})}/>
+                <CreateHabit 
+                    onSubmit={sendHabits}
+                    style={cancelCreateHabit? {display: "none"} : {}}>   
 
-                <Days disablePointer={loading}>
-                    {
-                        weekdays.map((day, index) =>{
+                    <input type="text" placeholder="nome do hábito" value={newHabit.name}
+                        onChange={(e) => setNewHabit({...newHabit, name: e.target.value})}/>
 
-                            const {days} = newHabit;   
-                            const selectedDay = days.includes(index+1);     
-                            return(             
-                                <div 
-                                    type="text" 
-                                    key={index}
-                                    style={selectedDay ? {backgroundColor:"#CFCFCF", color:"#FFFFFF"} : {}}
-                                    onClick={()=> sendDays(index+1)}>
-                                    {day}
-                                </div>
-                            );
-                        })
-                    }
-                </Days>
+                    <Days disablePointer={loading}>
+                        {
+                            weekdays.map((day, index) =>{
+
+                                const {days} = newHabit;   
+                                const selectedDay = days.includes(index+1);     
+                                return(             
+                                    <div 
+                                        type="text" 
+                                        key={index}
+                                        style={selectedDay ? {backgroundColor:"#CFCFCF", color:"#FFFFFF"} : {}}
+                                        onClick={()=> sendDays(index+1)}>
+                                        {day}
+                                    </div>
+                                );
+                            })
+                        }
+                    </Days>
+                        
+                    <Buttons>
+
+                        <Cancel onClick={()=> setCancelCreateHabit(true)}>Cancelar</Cancel>
+                        
+                        {loading?
+                        <button 
+                            style={{
+                                    display: "flex", 
+                                    justifyContent: "center", 
+                                    alignItems: "center", 
+                                    opacity: "0.7"
+                                }}>
+
+                            <ThreeDots 
+                                height="50" 
+                                width="50" 
+                                radius="9"
+                                color="#ffffff" 
+                                ariaLabel="three-dots-loading"
+                                wrapperStyle={{}}
+                                wrapperClassName=""
+                                visible={true}
+                            /> 
+                            </button>
+                            :
+                            <button type="submit">Salvar</button>   
+                        }
+                        
+                    </Buttons>
                     
-                <Buttons>
-
-                    <Cancel onClick={()=> setCancelCreateHabit(true)}>Cancelar</Cancel>
+                </CreateHabit>
                     
-                    {loading?
-                    <button 
-                        style={{
-                                display: "flex", 
-                                justifyContent: "center", 
-                                alignItems: "center", 
-                                opacity: "0.7"
-                            }}>
+                {cancelCreateHabit?
 
-                        <ThreeDots 
-                            height="50" 
-                            width="50" 
-                            radius="9"
-                            color="#ffffff" 
-                            ariaLabel="three-dots-loading"
-                            wrapperStyle={{}}
-                            wrapperClassName=""
-                            visible={true}
-                        /> 
-                        </button>
-                        :
-                        <button type="submit">Salvar</button>   
-                    }
-                    
-                </Buttons>
-                
-            </CreateHabit>
-                
-            {cancelCreateHabit?
+                    habits.map(habit =>{
 
-                habits.map(habit =>{
+                        const {id, name, days} = habit;
 
-                    const {id, name, days} = habit;
+                        return(
+                            <UserHabits key={id}> {/*style={habits.length !== 0 ? {display:"initial"} : {}}*/}
+                                <HabitName >
+                                    <p>{name}</p>
+                                    <ion-icon name="trash-outline" onClick={()=>deleteHabit(name, id)}></ion-icon>
+                                </HabitName>
 
-                    return(
-                        <UserHabits key={id}> {/*style={habits.length !== 0 ? {display:"initial"} : {}}*/}
-                            <HabitName >
-                                <p>{name}</p>
-                                <ion-icon name="trash-outline" onClick={()=>deleteHabit(name, id)}></ion-icon>
-                            </HabitName>
+                                <Days disablePointer={loading}>
+                                    
+                                    {
+                                        weekdays.map((day, index) =>{
 
-                            <Days disablePointer={loading}>
-                                
-                                {
-                                    weekdays.map((day, index) =>{
+                                            const includedDay = days.includes(index+1);
+                                        
+                                            return(
+                                                <div 
+                                                    key={index}
+                                                    placeholder={day}
+                                                    style={includedDay ? {backgroundColor:"#CFCFCF", color:"#FFFFFF"} : {}}
+                                                    onClick={()=> sendDays(index+1)}>
+                                                    {day}
+                                                </div>
+                                            );
+                                        })
+                                    }
+                                </Days>
+                            </UserHabits>
+                        )
+                    })
+                    :
+                    <></>
+                }
 
-                                        const includedDay = days.includes(index+1);
-                                       
-
-                                        return(
-                                            <div 
-                                                key={index}
-                                                placeholder={day}
-                                                style={includedDay ? {backgroundColor:"#CFCFCF", color:"#FFFFFF"} : {}}
-                                                onClick={()=> sendDays(index+1)}>
-                                                {day}
-                                            </div>
-                                        );
-                                    })
-                                }
-                            </Days>
-                        </UserHabits>
-                    )
-                })
-                :
-                <></>
-            }
-
-            {(habits.length === 0)?
-                <Message>
-                    <p>
-                        Você não tem nenhum hábito cadastrado ainda. 
-                        Adicione um hábito para começar a trackear!
-                    </p>
-                </Message>
-                :
-                <></>
-            }
-        </Container>
+                {(habits.length === 0)?
+                    <Message>
+                        <p>
+                            Você não tem nenhum hábito cadastrado ainda. 
+                            Adicione um hábito para começar a trackear!
+                        </p>
+                    </Message>
+                    :
+                    <></>
+                }
+            </Container>
+            <Footer/>
+        </>
     );
 }
 
 const Container = styled.fieldset`
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 5%;
     box-sizing: border-box;
     margin-bottom: 22%;
+    background-color: #f2f2f2;
+    margin-bottom: 22%;
 `;
 
 const Section = styled.div`
-    height: 10vh;
+    height: 85px;
     width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    padding: 20px 0;
+    box-sizing: border-box;
 
     p{
         font-size: 24px;
@@ -253,8 +264,8 @@ const Section = styled.div`
     }
 
     div{
-        height: 60%;
-        width: 12%;
+        height: 40px;
+        width: 40px;
         background-color: #52B6FF;
         color: #ffffff;
         font-size: 25px;
@@ -281,16 +292,16 @@ const Message = styled.div`
 `;
 
 const CreateHabit = styled.form`
-    height: 25vh;
+    height: 180px;
     width: 100%;
     border-radius: 5px;
-    padding: 5%;
+    padding: 30px;
     box-sizing: border-box;
     background-color: #ffffff;
     position: relative;
 
     input{
-        height: 30%;
+        height: 45px;
         width: 99%;
         margin-bottom: 2%;
         border: 1px solid #D5D5D5;
@@ -303,7 +314,7 @@ const CreateHabit = styled.form`
         color: #DBDBDB;
     }
     button{
-        height: 90%;
+        height: 35px;
         width: 45%;
         border-radius: 5px;
         background-color: #52B6FF;
@@ -320,7 +331,7 @@ const Buttons = styled.div`
     align-items: center;
     position: absolute;
     right: 4%;
-    bottom: 8%;
+    bottom: 5%;
 `;
 
 const Cancel = styled.div`
@@ -338,7 +349,7 @@ const UserHabits = styled.div`
     height: 15vh;
     width: 100%;
     border-radius: 5px;
-    padding: 5%;
+    padding: 20px;
     box-sizing: border-box;
     background-color: #ffffff;
     position: relative;

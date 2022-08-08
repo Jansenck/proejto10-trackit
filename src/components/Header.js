@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import UserContexts from "../contexts/UserContexts";
 
 import styled from "styled-components";
@@ -6,14 +6,14 @@ import styled from "styled-components";
 export default function Header(){
 
     const {image} = useContext(UserContexts);
-
-    //let userToken = window.localStorage.getItem('userToken');
-    //let userToken = JSON.parse(window.localStorage.getItem('userData'));
+    
+    const serializedUsedData = localStorage.getItem("localUserData");
+    const localUserData = JSON.parse(serializedUsedData);
 
     return( 
         <Head>
             <h1>Trackit</h1>
-            <img src={image} alt={image}/>
+            <img src={localUserData.image} alt={localUserData.image}/>
         </Head>
     );
 }
@@ -37,8 +37,8 @@ const Head = styled.div`
         color: #ffffff;
     }
     img{
-        height: 72%;
-        width: 15%;
+        height: 60px;
+        width: 60px;
         border-radius: 100%;
         background-color: #ffffff;
     }
