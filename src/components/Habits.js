@@ -10,9 +10,9 @@ import Footer from "./Footer";
 
 export default function Habits(){
 
-    const {token, progress, setProgress} = useContext(UserContexts);
+    const {token, image, progress, setProgress} = useContext(UserContexts);
 
-    const serializedUsedData = localStorage.getItem("localUserData");
+    const serializedUsedData = localStorage.getItem("userData");
     const localUserData = JSON.parse(serializedUsedData);
 
     const weekdays = ["D", "S", "T", "Q", "Q", "S", "S"];
@@ -27,7 +27,7 @@ export default function Habits(){
         const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits";
         const config = {
             headers:{
-                "Authorization": `Bearer ${localUserData !== undefined? localUserData.token : token}`
+                "Authorization": `Bearer ${localUserData !== null? localUserData.token : token}`
             }
         }
 
@@ -44,7 +44,7 @@ export default function Habits(){
         const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
         const config = {
             headers:{
-                "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
+                "Authorization" : `Bearer ${localUserData !== null? localUserData.token : token}`
             }
         };
 
@@ -110,7 +110,7 @@ export default function Habits(){
         
             const config = {
                 headers: {
-                    "Authorization": `Bearer ${localUserData !== undefined? localUserData.token : token}`
+                    "Authorization": `Bearer ${localUserData !== null? localUserData.token : token}`
                 }
             }
 
@@ -140,7 +140,7 @@ export default function Habits(){
             const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habitId}`;
             const config = {
                 headers:{
-                    "Authorization": `Bearer ${localUserData !== undefined? localUserData.token : token}`
+                    "Authorization": `Bearer ${localUserData !== null? localUserData.token : token}`
                 }
             };
 
@@ -157,7 +157,7 @@ export default function Habits(){
 
         <>
             <Header/>
-            <Container disabled={disableForm}> {/*style={{cursor: "wait"}}*/}
+            <Container disabled={disableForm}>
                 <Section>
                     <p>Meus Hábitos</p>
                     <div onClick={()=> setCancelCreateHabit(false)}>
@@ -426,7 +426,7 @@ const Days = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    ${(props) => props.disablePointer?  "pointer-events: none;" : undefined };
+    ${(props) => props.disablePointer?  "pointer-events: none;" : null };
 
     div{
         height: 32px;

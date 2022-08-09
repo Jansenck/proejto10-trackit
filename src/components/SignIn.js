@@ -30,7 +30,7 @@ export default function SignIn(){
         const promise = axios.post(URL, body);
 
         promise.then((response)=> {
-            const {token, image} = response.data;
+            const {token, image, name} = response.data;
 
             setImage(image);
             setToken(token);
@@ -39,7 +39,7 @@ export default function SignIn(){
             
             const localData = {token, image};
             const serializeUserData = JSON.stringify(localData);
-            localStorage.setItem(`${token}`, serializeUserData);
+            localStorage.setItem("userData", serializeUserData);
 
         });
         promise.catch(error => {

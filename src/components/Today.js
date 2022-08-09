@@ -14,7 +14,7 @@ export default function Today(){
 
     const {token, progress, setProgress} = useContext(UserContexts);
 
-    const serializedUsedData = localStorage.getItem("localUserData");
+    const serializedUsedData = localStorage.getItem("userData");
     const localUserData = JSON.parse(serializedUsedData);
 
     const [habits, setHabits] = useState([]);
@@ -29,7 +29,7 @@ export default function Today(){
         const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
         const config = {
             headers:{
-                "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
+                "Authorization" : `Bearer ${localUserData !== null? localUserData.token : token}`
             }
         };
 
@@ -54,7 +54,7 @@ export default function Today(){
 
         const config = {
             headers:{
-                "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
+                "Authorization" : `Bearer ${localUserData !== null? localUserData.token : token}`
             }
         };
 
@@ -65,7 +65,7 @@ export default function Today(){
             const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
             const config = {
                 headers:{
-                    "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
+                    "Authorization" : `Bearer ${localUserData !== null? localUserData.token : token}`
                 }
             };
 
@@ -93,7 +93,7 @@ export default function Today(){
 
         const config = {
             headers:{
-                "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
+                "Authorization" : `Bearer ${localUserData !== null? localUserData.token : token}`
             }
         };
 
@@ -104,7 +104,7 @@ export default function Today(){
             const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today";
             const config = {
                 headers:{
-                    "Authorization" : `Bearer ${localUserData !== undefined? localUserData.token : token}`
+                    "Authorization" : `Bearer ${localUserData !== null? localUserData.token : token}`
                 }
             };
 

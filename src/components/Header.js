@@ -5,19 +5,15 @@ import styled from "styled-components";
 
 export default function Header(){
 
-    const {image} = useContext(UserContexts);
+    const {token, image} = useContext(UserContexts);
     
-    const serializedUsedData = localStorage.getItem("localUserData");
+    const serializedUsedData = localStorage.getItem("userData");
     const localUserData = JSON.parse(serializedUsedData);
-
-    console.log("localUserData", localUserData);
-    console.log('image', image)
-    //<img src={localUserData !== undefined? localUserData.image : image} alt={localUserData !== undefined? localUserData.image : image}/>
-
+    
     return( 
         <Head>
             <h1>Trackit</h1>
-            <img src={image} alt={image}/>
+            <img src={localUserData !== null? localUserData.image : image} alt={localUserData !== null? localUserData.image : image}/>
         </Head>
     );
 }
